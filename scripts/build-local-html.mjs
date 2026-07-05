@@ -62,8 +62,8 @@ js = js.replace(
 js = js.replace(/<\/script/gi, "<\\/script");
 
 const singleHtml = html
-  .replace(cssMatch[0], `<style>\n${css}\n</style>`)
-  .replace(jsMatch[0], `<script type="module">\n${js}\n</script>`);
+  .replace(cssMatch[0], () => `<style>\n${css}\n</style>`)
+  .replace(jsMatch[0], () => `<script type="module">\n${js}\n</script>`);
 
 if (!existsSync(releaseDir)) {
   mkdirSync(releaseDir, { recursive: true });
