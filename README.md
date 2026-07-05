@@ -6,7 +6,7 @@
 
 > 如果你也经常为了视频封面反复打开设计软件，这个项目可以帮你把那一步变成 30 秒。觉得有用的话，欢迎给一个 Star。
 
-[在线体验](https://yinbaozong.github.io/Voice-cover-image/) · [查看源码](https://github.com/yinbaozong/Voice-cover-image)
+[在线体验 Cloudflare Pages](https://voice-cover-image.pages.dev/) · [备用 GitHub Pages](https://yinbaozong.github.io/Voice-cover-image/) · [查看源码](https://github.com/yinbaozong/Voice-cover-image)
 
 ![Voice Cover Image editor preview](docs/editor-concept.png)
 
@@ -121,6 +121,7 @@ local-html/Voice-Cover-Image.html
 如果某些浏览器因为安全策略限制 `file://` 页面运行，请改用 Chrome / Edge，或让对方使用在线版：
 
 ```text
+https://voice-cover-image.pages.dev/
 https://yinbaozong.github.io/Voice-cover-image/
 ```
 
