@@ -19,6 +19,8 @@ import {
   normalizeSettings,
   renderCover,
 } from "./coverRenderer.js";
+import logoCnSrc from "./assets/bambu-logo-cn.png";
+import logoEnSrc from "./assets/bambu-logo-en.png";
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -57,6 +59,13 @@ const controlGroups = {
   layout: "版式",
   photo: "照片",
 };
+
+const logoPresets = [
+  { id: "cn", label: "中文 Logo", src: logoCnSrc },
+  { id: "en", label: "英文 Logo", src: logoEnSrc },
+];
+
+const defaultLogoSrc = logoPresets[0].src;
 
 function SliderControl({ label, value, min, max, step = 1, unit = "", onChange }) {
   return (
@@ -333,7 +342,7 @@ function App() {
     return "";
   });
   const [logoSrc, setLogoSrc] = useState(() => {
-    return "";
+    return defaultLogoSrc;
   });
   const [photoImage, setPhotoImage] = useState(null);
   const [logoImage, setLogoImage] = useState(null);
@@ -433,8 +442,13 @@ function App() {
     setStatus("正在读取 Logo");
     const dataUrl = await fileToDataUrl(file);
     setLogoSrc(dataUrl);
-    setStatus("Logo 已载入");
+    setStatus("自定义 Logo 已载入");
   };
+
+  const selectLogoPreset = useCallback((preset) => {
+    setLogoSrc(preset.src);
+    setStatus(`${preset.label} 已选中`);
+  }, []);
 
   const exportPng = () => {
     const canvas = canvasRef.current;
@@ -454,9 +468,8 @@ function App() {
   const resetAll = () => {
     setSettings(defaultSettings);
     setPhotoSrc("");
-    setLogoSrc("");
+    setLogoSrc(defaultLogoSrc);
     setPhotoImage(null);
-    setLogoImage(null);
     setStatus("已重置");
   };
 
@@ -484,6 +497,19 @@ function App() {
             <div className="button-grid">
               <UploadButton id="photo-upload" icon={ImageIcon} label="上传照片" onFile={loadPhotoFile} />
               <UploadButton id="logo-upload" icon={Upload} label="上传 Logo" onFile={loadLogoFile} />
+            </div>
+            <div className="preset-row" aria-label="内置 Logo">
+              {logoPresets.map((preset) => (
+                <button
+                  key={preset.id}
+                  className={`preset-button ${logoSrc === preset.src ? "is-active" : ""}`}
+                  type="button"
+                  aria-pressed={logoSrc === preset.src}
+                  onClick={() => selectLogoPreset(preset)}
+                >
+                  {preset.label}
+                </button>
+              ))}
             </div>
             <label className="text-control">
               <span>主标题</span>

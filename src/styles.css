@@ -195,6 +195,40 @@ button {
   flex: 1;
 }
 
+.preset-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.preset-button {
+  height: 32px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 7px;
+  color: #1f2933;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.preset-button:hover {
+  transform: translateY(-1px);
+}
+
+.preset-button.is-active {
+  color: #fff;
+  background: #111820;
+  border-color: #111820;
+}
+
 .full {
   width: 100%;
 }

@@ -22,6 +22,7 @@
 - `1920 x 1080` 标准视频封面画布。
 - 左侧标题区、右侧照片区、中央线性羽化蒙版。
 - 支持上传照片和 Logo。
+- 内置中文 Logo 和英文 Logo，常用品牌不用反复上传。
 - 支持主标题、副标题编辑。
 - 主标题可切换加粗，避免每张封面都手调字重。
 - 主标题不自动乱换行，只按用户输入的换行显示。
@@ -99,7 +100,29 @@ dist/
 
 `dist/index.html` 就是最终入口，旁边的 `assets/` 和 `fonts/` 目录是它需要的资源。把整个 `dist/` 文件夹上传到任意静态托管服务即可运行，例如 GitHub Pages、Netlify、Vercel、公司内网静态服务器等。
 
-注意：当前产物是“静态站点”，不是单文件 HTML。不要只单独复制 `index.html`，需要连同 `assets/`、`fonts/` 一起分享。后续如果要做成真正双击即可运行的单文件 HTML，可以再增加 single-file build 脚本，把 JS、CSS 和字体都内联进去。
+注意：`dist/` 是“静态站点文件夹”，不要只单独复制 `index.html`，需要连同 `assets/`、`fonts/` 一起分享。
+
+## 生成本地单文件版
+
+如果你想发给朋友一个可以本地打开的 HTML 文件，运行：
+
+```powershell
+npm run local
+```
+
+生成结果：
+
+```text
+local-html/Voice-Cover-Image.html
+```
+
+这个文件已经内联了 JS、CSS 和字体。朋友不需要安装 Node.js，也不需要部署服务器，直接用 Chrome 或 Edge 打开即可使用。
+
+如果某些浏览器因为安全策略限制 `file://` 页面运行，请改用 Chrome / Edge，或让对方使用在线版：
+
+```text
+https://yinbaozong.github.io/Voice-cover-image/
+```
 
 ## GitHub Pages
 
@@ -124,15 +147,19 @@ https://yinbaozong.github.io/Voice-cover-image/
 
 如果第一次部署没有立刻出现，请到 GitHub 仓库的 `Settings -> Pages` 确认 Source 选择为 `GitHub Actions`。
 
+GitHub Pages 是 GitHub 给仓库提供的静态网页托管服务。它只托管 HTML、CSS、JS、图片、字体这类静态文件，不运行后端程序。这个项目的在线版挂在 `yinbaozong.github.io/Voice-cover-image/` 下面，不是单独占用一个新域名，而是使用 GitHub 的二级域名和仓库路径。
+
 ## 项目结构
 
 ```text
 Voice-cover-image
 ├─ .github/workflows/       GitHub Pages 自动部署
 ├─ docs/                    说明图、设计参考
+├─ scripts/                 构建脚本，例如本地单文件 HTML
 ├─ public/                  静态资源，目前放 HarmonyOS 字体
 ├─ src/                     核心源码
 │  ├─ App.jsx               编辑器界面、交互、状态管理
+│  ├─ assets/               内置 Logo 图片
 │  ├─ coverRenderer.js      Canvas 封面渲染引擎
 │  ├─ main.jsx              React 入口
 │  └─ styles.css            应用样式
@@ -322,6 +349,9 @@ npm run dev -- --port 5173
 
 # 构建静态 HTML 站点
 npm run html
+
+# 构建本地单文件 HTML
+npm run local
 
 # 预览生产构建
 npm run preview -- --port 4173
