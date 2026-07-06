@@ -217,6 +217,7 @@ Voice-cover-image
 {
   title,
   subtitle,
+  subtitleEnabled,
   titleSize,
   subtitleSize,
   titleBold,
@@ -250,6 +251,7 @@ Voice-cover-image
 
 - 改默认标题：`defaultSettings.title`
 - 改默认副标题：`defaultSettings.subtitle`
+- 改是否默认启用副标题和横线：`defaultSettings.subtitleEnabled`
 - 改标题位置：`defaultSettings.titleX` / `defaultSettings.titleY`
 - 改标题字号：`defaultSettings.titleSize`
 - 改标题是否默认加粗：`defaultSettings.titleBold`

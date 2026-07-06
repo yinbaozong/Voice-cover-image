@@ -277,7 +277,7 @@ button {
   margin-top: 14px;
 }
 
-.text-control span,
+.text-control > span,
 .control > span {
   display: flex;
   align-items: center;
@@ -286,6 +286,40 @@ button {
   color: #4b5563;
   font-size: 12px;
   font-weight: 800;
+}
+
+.field-heading {
+  min-height: 30px;
+}
+
+.checkbox-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #1f2933;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.checkbox-toggle input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: #00ae42;
+}
+
+.text-control.is-disabled textarea,
+.control.is-disabled input {
+  cursor: not-allowed;
+  color: #7c8792;
+  background: #f3f5f7;
+  opacity: 0.72;
+}
+
+.control.is-disabled > span {
+  color: #8a949f;
 }
 
 .control strong {

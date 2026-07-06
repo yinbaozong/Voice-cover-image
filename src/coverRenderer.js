@@ -10,6 +10,7 @@ export const defaultSettings = {
   title: "打印过程缠料、打结\n处理方法",
   subtitle:
     "本期视频将为您演示，当打印过程中出现耗材缠线或打结时，如何在不结束当前打印的情况下解决故障。",
+  subtitleEnabled: true,
   titleSize: 92,
   subtitleSize: 36,
   titleBold: true,
@@ -274,6 +275,11 @@ const drawTextBlock = (ctx, settings) => {
   });
 
   const titleBottom = settings.titleY + (titleLines.length - 1) * titleLineHeight + settings.titleSize;
+  if (!settings.subtitleEnabled) {
+    ctx.restore();
+    return;
+  }
+
   const lineY = titleBottom + settings.textGap;
   const lineEnd = settings.titleX + clamp(widestTitle, 280, COVER_WIDTH - settings.titleX - 80);
   ctx.strokeStyle = settings.foreground;
@@ -323,6 +329,7 @@ export const normalizeSettings = (settings) => ({
   ...defaultSettings,
   ...settings,
   titleBold: settings.titleBold ?? defaultSettings.titleBold,
+  subtitleEnabled: settings.subtitleEnabled ?? defaultSettings.subtitleEnabled,
   titleY: clamp(settings.titleY ?? defaultSettings.titleY, 120, 760),
   logoX: clamp(settings.logoX ?? defaultSettings.logoX, 20, 760),
   logoY: clamp(settings.logoY ?? defaultSettings.logoY, 20, 320),

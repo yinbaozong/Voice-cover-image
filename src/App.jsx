@@ -67,9 +67,9 @@ const logoPresets = [
 
 const defaultLogoSrc = logoPresets[0].src;
 
-function SliderControl({ label, value, min, max, step = 1, unit = "", onChange }) {
+function SliderControl({ label, value, min, max, step = 1, unit = "", disabled = false, onChange }) {
   return (
-    <label className="control">
+    <label className={`control ${disabled ? "is-disabled" : ""}`}>
       <span>
         {label}
         <strong>
@@ -83,6 +83,7 @@ function SliderControl({ label, value, min, max, step = 1, unit = "", onChange }
         max={max}
         step={step}
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(Number(event.target.value))}
       />
     </label>
@@ -361,6 +362,12 @@ function App() {
     const titleLineHeight = settings.titleSize * 1.23;
     const titleHeight = (Math.max(titleLines.length, 1) - 1) * titleLineHeight + settings.titleSize;
 
+    if (!settings.subtitleEnabled) {
+      setSetting({ titleY: Math.round((COVER_HEIGHT - titleHeight) / 2) });
+      setStatus("文字已居中");
+      return;
+    }
+
     ctx.font = `${settings.titleBold ? 900 : 500} ${settings.titleSize}px ${APP_FONT_FAMILY}`;
     const widestTitle = titleLines.reduce((max, line) => Math.max(max, ctx.measureText(line).width), 0);
     const lineWidth = clamp(widestTitle, 280, COVER_WIDTH - settings.titleX - 80);
@@ -512,29 +519,40 @@ function App() {
               ))}
             </div>
             <label className="text-control">
-              <span>主标题</span>
+              <span className="field-heading">
+                <span>主标题</span>
+                <button
+                  className={`mini-toggle ${settings.titleBold ? "is-active" : ""}`}
+                  type="button"
+                  aria-pressed={settings.titleBold}
+                  onClick={() => setSetting({ titleBold: !settings.titleBold })}
+                >
+                  <Bold size={14} aria-hidden="true" />
+                  加粗
+                </button>
+              </span>
               <textarea
                 value={settings.title}
                 rows={3}
                 onChange={(event) => setSetting({ title: event.target.value })}
               />
             </label>
-            <div className="inline-tools">
-              <button
-                className={`mini-toggle ${settings.titleBold ? "is-active" : ""}`}
-                type="button"
-                aria-pressed={settings.titleBold}
-                onClick={() => setSetting({ titleBold: !settings.titleBold })}
-              >
-                <Bold size={14} aria-hidden="true" />
-                加粗
-              </button>
-            </div>
-            <label className="text-control">
-              <span>副标题</span>
+            <label className={`text-control ${settings.subtitleEnabled ? "" : "is-disabled"}`}>
+              <span className="field-heading">
+                <span>副标题</span>
+                <label className="checkbox-toggle">
+                  <input
+                    type="checkbox"
+                    checked={settings.subtitleEnabled}
+                    onChange={(event) => setSetting({ subtitleEnabled: event.target.checked })}
+                  />
+                  启用副标题
+                </label>
+              </span>
               <textarea
                 value={settings.subtitle}
                 rows={4}
+                disabled={!settings.subtitleEnabled}
                 onChange={(event) => setSetting({ subtitle: event.target.value })}
               />
             </label>
@@ -550,6 +568,7 @@ function App() {
               value={settings.subtitleSize}
               min={22}
               max={52}
+              disabled={!settings.subtitleEnabled}
               onChange={(value) => setSetting({ subtitleSize: value })}
             />
             <SliderControl
