@@ -5,12 +5,9 @@ const FONT_FAMILY =
   '"HarmonyOS Sans SC Cover", "HarmonyOS Sans SC", "HarmonyOS Sans", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif';
 
 export const fontWeightOptions = [
-  { value: 100, label: "细体 Thin" },
   { value: 300, label: "轻体 Light" },
   { value: 400, label: "常规 Regular" },
   { value: 500, label: "中等 Medium" },
-  { value: 700, label: "粗体 Bold" },
-  { value: 900, label: "特粗 Black" },
 ];
 
 export const getFontFamily = () => FONT_FAMILY;
@@ -38,10 +35,9 @@ export const defaultSettings = {
   textGap: 45,
   lineControlsUnlocked: false,
   logoSize: 100,
-  logoSizeUnlocked: false,
+  logoControlsUnlocked: false,
   logoX: 100,
   logoY: 100,
-  logoPositionUnlocked: false,
   maskPosition: 0.53,
   feather: 0.22,
   imageScale: 1,
@@ -355,9 +351,8 @@ export const normalizeSettings = (settings) => ({
   fontWeight: normalizeFontWeight(settings.fontWeight),
   lineControlsUnlocked:
     settings.lineControlsUnlocked ?? defaultSettings.lineControlsUnlocked,
-  logoSizeUnlocked: settings.logoSizeUnlocked ?? defaultSettings.logoSizeUnlocked,
-  logoPositionUnlocked:
-    settings.logoPositionUnlocked ?? defaultSettings.logoPositionUnlocked,
+  logoControlsUnlocked:
+    settings.logoControlsUnlocked ?? defaultSettings.logoControlsUnlocked,
   titleY: clamp(settings.titleY ?? defaultSettings.titleY, 120, 760),
   logoX: clamp(settings.logoX ?? defaultSettings.logoX, 20, 760),
   logoY: clamp(settings.logoY ?? defaultSettings.logoY, 20, 320),

@@ -25,7 +25,7 @@
 - 内置中文 Logo 和英文 Logo，常用品牌不用反复上传。
 - Logo 默认位于水平 `100px`、垂直 `100px`；位置控制默认锁定，勾选“允许调整”后才可修改。
 - 支持主标题、副标题编辑。
-- 只使用 HarmonyOS Sans SC，并提供细体、轻体、常规、中等、粗体和特粗六档字重。
+- 只使用 HarmonyOS Sans SC，并提供轻体、常规、中等三档基础字重。
 - 主标题可切换加粗，避免每张封面都手调字重。
 - 主标题不自动乱换行，只按用户输入的换行显示。
 - 横线粗细、文字组位置、标题和横线间距可调；横线参数默认锁定，确认后再开放调整。
@@ -263,12 +263,11 @@ Voice-cover-image
 - 改标题和横线距离：`defaultSettings.textGap`，当前默认 `45px`
 - 改横线参数是否默认解锁：`defaultSettings.lineControlsUnlocked`
 - 改 Logo 大小：`defaultSettings.logoSize`，当前默认 `100`
-- 改 Logo 大小是否默认解锁：`defaultSettings.logoSizeUnlocked`
+- 改 Logo 参数是否默认解锁：`defaultSettings.logoControlsUnlocked`
 - 改 Logo 位置：`defaultSettings.logoX` / `defaultSettings.logoY`
-- 改 Logo 位置是否默认解锁：`defaultSettings.logoPositionUnlocked`
 - 改蒙版位置：`defaultSettings.maskPosition`
 - 改羽化宽度：`defaultSettings.feather`
-- 增删鸿蒙字重：`fontWeightOptions` 与 `src/styles.css` 中的 `@font-face`
+- 增删鸿蒙基础字重：`fontWeightOptions` 与 `src/styles.css` 中的 `@font-face`
 
 ## 二次开发路线
 

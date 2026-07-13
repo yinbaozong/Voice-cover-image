@@ -26,7 +26,7 @@ import logoEnSrc from "./assets/bambu-logo-en.png";
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-const STORAGE_KEY = "voice-cover-image/v3";
+const STORAGE_KEY = "voice-cover-image/v4";
 
 const measureWrappedLines = (ctx, text, maxWidth) => {
   const sourceLines = String(text || "").split("\n");
@@ -604,12 +604,14 @@ function App() {
               onChange={(value) => setSetting({ subtitleSize: value })}
             />
             <div className="control-group-heading">
-              <span>Logo 大小</span>
+              <span>Logo 参数</span>
               <label className="checkbox-toggle">
                 <input
                   type="checkbox"
-                  checked={settings.logoSizeUnlocked}
-                  onChange={(event) => setSetting({ logoSizeUnlocked: event.target.checked })}
+                  checked={settings.logoControlsUnlocked}
+                  onChange={(event) =>
+                    setSetting({ logoControlsUnlocked: event.target.checked })
+                  }
                 />
                 允许调整
               </label>
@@ -619,29 +621,16 @@ function App() {
               value={settings.logoSize}
               min={60}
               max={240}
-              disabled={!settings.logoSizeUnlocked}
+              disabled={!settings.logoControlsUnlocked}
               onChange={(value) => setSetting({ logoSize: value })}
             />
-            <div className="control-group-heading">
-              <span>Logo 位置</span>
-              <label className="checkbox-toggle">
-                <input
-                  type="checkbox"
-                  checked={settings.logoPositionUnlocked}
-                  onChange={(event) =>
-                    setSetting({ logoPositionUnlocked: event.target.checked })
-                  }
-                />
-                允许调整
-              </label>
-            </div>
             <SliderControl
               label="Logo 水平"
               value={settings.logoX}
               min={40}
               max={520}
               unit="px"
-              disabled={!settings.logoPositionUnlocked}
+              disabled={!settings.logoControlsUnlocked}
               onChange={(value) => setSetting({ logoX: value })}
             />
             <SliderControl
@@ -650,7 +639,7 @@ function App() {
               min={30}
               max={260}
               unit="px"
-              disabled={!settings.logoPositionUnlocked}
+              disabled={!settings.logoControlsUnlocked}
               onChange={(value) => setSetting({ logoY: value })}
             />
           </Section>
