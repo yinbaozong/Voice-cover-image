@@ -23,6 +23,7 @@
 - 左侧标题区、右侧照片区、中央线性羽化蒙版。
 - 支持上传照片和 Logo。
 - 内置中文 Logo 和英文 Logo，常用品牌不用反复上传。
+- Logo 默认位于水平 `100px`、垂直 `100px`；位置控制默认锁定，勾选“允许调整”后才可修改。
 - 支持主标题、副标题编辑。
 - 主标题可切换加粗，避免每张封面都手调字重。
 - 主标题不自动乱换行，只按用户输入的换行显示。
@@ -253,11 +254,13 @@ Voice-cover-image
 - 改默认副标题：`defaultSettings.subtitle`
 - 改是否默认启用副标题和横线：`defaultSettings.subtitleEnabled`
 - 改标题位置：`defaultSettings.titleX` / `defaultSettings.titleY`
-- 改标题字号：`defaultSettings.titleSize`
+- 改主标题字号：`defaultSettings.titleSize`，当前默认 `90`
+- 改副标题字号：`defaultSettings.subtitleSize`，当前默认 `50`，界面范围为 `30–90`
 - 改标题是否默认加粗：`defaultSettings.titleBold`
 - 改横线粗细：`defaultSettings.lineThickness`
-- 改标题和横线距离：`defaultSettings.textGap`
+- 改标题和横线距离：`defaultSettings.textGap`，当前默认 `45px`
 - 改 Logo 位置：`defaultSettings.logoX` / `defaultSettings.logoY`
+- 改 Logo 位置是否默认解锁：`defaultSettings.logoPositionUnlocked`
 - 改蒙版位置：`defaultSettings.maskPosition`
 - 改羽化宽度：`defaultSettings.feather`
 - 改字体：`FONT_FAMILY`

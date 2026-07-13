@@ -229,6 +229,23 @@ button {
   border-color: #111820;
 }
 
+.font-note {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 9px 1px 0;
+  color: #7a8590;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.font-note strong {
+  color: #4d5965;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .full {
   width: 100%;
 }
@@ -290,6 +307,20 @@ button {
 
 .field-heading {
   min-height: 30px;
+}
+
+.control-group-heading {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .checkbox-toggle {
