@@ -23,7 +23,7 @@
 - 左侧标题区、右侧照片区、中央线性羽化蒙版。
 - 支持上传照片和 Logo。
 - 内置中文 Logo 和英文 Logo，常用品牌不用反复上传。
-- Logo 默认位于水平 `100px`、垂直 `100px`；位置控制默认锁定，勾选“允许调整”后才可修改。
+- Logo 大小默认 `100`，位置默认水平 `100px`、垂直 `100px`；三项共用一个“允许调整”开关。
 - 支持主标题、副标题编辑。
 - 只使用 HarmonyOS Sans SC，并提供轻体、常规、中等三档基础字重。
 - 主标题可切换加粗，避免每张封面都手调字重。
@@ -66,13 +66,14 @@ http://127.0.0.1:5173/
 
 1. 点击 `上传照片`，选择右侧要展示的产品图、截图或实拍图。
 2. 点击 `上传 Logo`，选择品牌 Logo。推荐透明 PNG，也支持常见图片格式。
-3. 在左侧输入主标题和副标题。
+3. 选择鸿蒙字重，在左侧输入主标题和副标题。
 4. 用 `加粗` 按钮决定主标题是否加粗。
-5. 在画布上拖动照片，滚轮缩放照片。
-6. 拖动蒙版圆点调整照片进入文字区的位置。
-7. 拖动两侧羽化线调整过渡柔和程度。
-8. 在右侧调整旋转、亮度、阴影、饱和度、对比度。
-9. 点击右上角 `导出 PNG`。
+5. 需要修改 Logo 时，勾选 Logo 参数旁的 `允许调整`，再修改大小和位置。
+6. 在画布上拖动照片，滚轮缩放照片。
+7. 拖动蒙版圆点调整照片进入文字区的位置。
+8. 拖动两侧羽化线调整过渡柔和程度。
+9. 在右侧调整旋转、亮度、阴影、饱和度、对比度。
+10. 点击右上角 `导出 PNG`。
 
 导出的图片固定为：
 
@@ -152,6 +153,54 @@ https://yinbaozong.github.io/Voice-cover-image/
 
 GitHub Pages 是 GitHub 给仓库提供的静态网页托管服务。它只托管 HTML、CSS、JS、图片、字体这类静态文件，不运行后端程序。这个项目的在线版挂在 `yinbaozong.github.io/Voice-cover-image/` 下面，不是单独占用一个新域名，而是使用 GitHub 的二级域名和仓库路径。
 
+## 我是怎么自动更新 GitHub 的
+
+这个项目的本地文件夹已经连接到 GitHub 仓库，并且电脑上的 GitHub 登录状态已经配置好。因此修改完成后，可以在 PowerShell 里执行：
+
+```powershell
+cd E:\opai\Voice-cover-image
+
+# 查看改了哪些文件
+git status
+
+# 把准备提交的文件加入暂存区
+git add README.md src public
+
+# 生成一次有说明的版本记录
+git commit -m "描述这次修改"
+
+# 把本地 main 分支上传到 GitHub
+git push origin main
+```
+
+这四个 Git 动作的关系是：
+
+```text
+修改文件 -> git add -> git commit -> git push -> GitHub 收到新版本
+```
+
+其中 `git push` 只是把源码上传到 GitHub。源码到达 `main` 分支以后，`.github/workflows/pages.yml` 会触发 GitHub Actions，自动安装依赖、执行 `npm run build`，再把 `dist/` 发布到 GitHub Pages。
+
+你也可以完全在 GitHub 网页里修改单个文本文件：打开文件，点击铅笔图标，编辑后点击 `Commit changes`。不过涉及多个源码文件、字体或本地测试时，命令行更可靠。
+
+### Cloudflare Pages 怎么更新
+
+Cloudflare Pages 和 GitHub Pages 是两套独立托管。当前 Cloudflare 项目使用构建后的 `dist/` 手动部署：
+
+```powershell
+cd E:\opai\Voice-cover-image
+npm run build
+npx wrangler pages deploy dist --project-name voice-cover-image --branch main
+```
+
+部署完成后，正式地址仍然是：
+
+```text
+https://voice-cover-image.pages.dev/
+```
+
+也可以进入 Cloudflare Pages 后台，选择 Production，上传整个 `dist/` 文件夹。不要上传 `src/`、`node_modules/` 或整个项目目录。
+
 ## 项目结构
 
 ```text
@@ -220,6 +269,7 @@ Voice-cover-image
   title,
   subtitle,
   subtitleEnabled,
+  fontWeight,
   titleSize,
   subtitleSize,
   titleBold,
@@ -228,7 +278,9 @@ Voice-cover-image
   textMaxWidth,
   lineThickness,
   textGap,
+  lineControlsUnlocked,
   logoSize,
+  logoControlsUnlocked,
   logoX,
   logoY,
   maskPosition,
@@ -299,28 +351,21 @@ Voice-cover-image
 
 建议新增一个 CSV/Excel 导入模块，把每一行标题、副标题、图片路径映射成一组 `settings`，然后循环调用 `renderCover()` 导出。
 
-### 想做真正的单文件 HTML
+### 想修改单文件 HTML 的生成方式
 
-可以继续加一个构建脚本：
-
-```text
-npm run build:single
-```
-
-目标输出：
+当前 `npm run local` 已经可以生成真正的单文件 HTML，脚本位于：
 
 ```text
-release/voice-cover-image.html
+scripts/build-local-html.mjs
 ```
 
-实现方向：
+它会先调用 Vite 构建，再把 JS、CSS、Logo 和字体转换并内联到：
 
-- 把构建后的 JS 内联到 HTML。
-- 把 CSS 内联到 HTML。
-- 把字体转成 base64 内联。
-- 保留本地上传和 PNG 导出能力。
+```text
+local-html/Voice-Cover-Image.html
+```
 
-这样朋友不需要安装 Node.js，也不需要部署服务器，直接打开一个 HTML 文件就能用。
+修改这个脚本后，应同时测试 `npm run build` 和 `npm run local`，确保在线版与离线版都能正常打开。
 
 ## 给下一个 AI 开发者的上下文
 
@@ -364,6 +409,12 @@ npm run local
 
 # 预览生产构建
 npm run preview -- --port 4173
+
+# 上传源码到 GitHub（先确认已经 git add 和 git commit）
+git push origin main
+
+# 部署 Cloudflare Pages
+npx wrangler pages deploy dist --project-name voice-cover-image --branch main
 ```
 
 ## 隐私说明
