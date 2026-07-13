@@ -25,9 +25,10 @@
 - 内置中文 Logo 和英文 Logo，常用品牌不用反复上传。
 - Logo 默认位于水平 `100px`、垂直 `100px`；位置控制默认锁定，勾选“允许调整”后才可修改。
 - 支持主标题、副标题编辑。
+- 只使用 HarmonyOS Sans SC，并提供细体、轻体、常规、中等、粗体和特粗六档字重。
 - 主标题可切换加粗，避免每张封面都手调字重。
 - 主标题不自动乱换行，只按用户输入的换行显示。
-- 横线粗细、文字组位置、标题和横线间距可调。
+- 横线粗细、文字组位置、标题和横线间距可调；横线参数默认锁定，确认后再开放调整。
 - 一键把标题、横线、副标题整组垂直居中。
 - 照片可在画布上直接拖动，滚轮缩放。
 - 支持照片旋转、亮度、阴影、饱和度、对比度调整。
@@ -253,17 +254,21 @@ Voice-cover-image
 - 改默认标题：`defaultSettings.title`
 - 改默认副标题：`defaultSettings.subtitle`
 - 改是否默认启用副标题和横线：`defaultSettings.subtitleEnabled`
+- 改默认鸿蒙字重：`defaultSettings.fontWeight`
 - 改标题位置：`defaultSettings.titleX` / `defaultSettings.titleY`
 - 改主标题字号：`defaultSettings.titleSize`，当前默认 `90`
 - 改副标题字号：`defaultSettings.subtitleSize`，当前默认 `50`，界面范围为 `30–90`
 - 改标题是否默认加粗：`defaultSettings.titleBold`
-- 改横线粗细：`defaultSettings.lineThickness`
+- 改横线粗细：`defaultSettings.lineThickness`，当前默认 `4px`
 - 改标题和横线距离：`defaultSettings.textGap`，当前默认 `45px`
+- 改横线参数是否默认解锁：`defaultSettings.lineControlsUnlocked`
+- 改 Logo 大小：`defaultSettings.logoSize`，当前默认 `100`
+- 改 Logo 大小是否默认解锁：`defaultSettings.logoSizeUnlocked`
 - 改 Logo 位置：`defaultSettings.logoX` / `defaultSettings.logoY`
 - 改 Logo 位置是否默认解锁：`defaultSettings.logoPositionUnlocked`
 - 改蒙版位置：`defaultSettings.maskPosition`
 - 改羽化宽度：`defaultSettings.feather`
-- 改字体：`FONT_FAMILY`
+- 增删鸿蒙字重：`fontWeightOptions` 与 `src/styles.css` 中的 `@font-face`
 
 ## 二次开发路线
 
@@ -288,8 +293,7 @@ Voice-cover-image
 - `foreground`
 - `muted`
 - `background`
-- `fontFamily`
-- `titleWeight`
+- `fontWeight`
 - `lineColor`
 
 ### 想做批量生成

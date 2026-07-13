@@ -1,7 +1,31 @@
 @font-face {
   font-family: "HarmonyOS Sans SC Cover";
+  src: url("/fonts/HarmonyOS_Sans_SC_Thin.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC Cover";
+  src: url("/fonts/HarmonyOS_Sans_SC_Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC Cover";
   src: url("/fonts/HarmonyOS_Sans_SC_Regular.ttf") format("truetype");
-  font-weight: 400 600;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC Cover";
+  src: url("/fonts/HarmonyOS_Sans_SC_Medium.ttf") format("truetype");
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
@@ -9,14 +33,22 @@
 @font-face {
   font-family: "HarmonyOS Sans SC Cover";
   src: url("/fonts/HarmonyOS_Sans_SC_Bold.ttf") format("truetype");
-  font-weight: 700 900;
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC Cover";
+  src: url("/fonts/HarmonyOS_Sans_SC_Black.ttf") format("truetype");
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
   font-family: "HarmonyOS Sans SC Cover", "HarmonyOS Sans SC", "HarmonyOS Sans",
-    "Noto Sans SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
+    "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
   color: #15191e;
   background: #e7ebef;
   font-synthesis: none;
@@ -229,21 +261,33 @@ button {
   border-color: #111820;
 }
 
-.font-note {
+.font-control {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin: 9px 1px 0;
+  margin: 10px 1px 0;
   color: #7a8590;
   font-size: 11px;
   line-height: 1.35;
 }
 
-.font-note strong {
-  color: #4d5965;
+.font-control select {
+  width: 150px;
+  height: 30px;
+  padding: 0 28px 0 9px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 7px;
+  color: #25303a;
+  background: #fff;
+  outline: none;
   font-size: 11px;
   font-weight: 700;
+}
+
+.font-control select:focus {
+  border-color: rgba(0, 174, 66, 0.55);
+  box-shadow: 0 0 0 3px rgba(0, 174, 66, 0.1);
 }
 
 .full {

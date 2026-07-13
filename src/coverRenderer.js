@@ -2,24 +2,43 @@ export const COVER_WIDTH = 1920;
 export const COVER_HEIGHT = 1080;
 
 const FONT_FAMILY =
-  '"HarmonyOS Sans SC Cover", "HarmonyOS Sans SC", "HarmonyOS Sans", "Noto Sans SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif';
+  '"HarmonyOS Sans SC Cover", "HarmonyOS Sans SC", "HarmonyOS Sans", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif';
+
+export const fontWeightOptions = [
+  { value: 100, label: "细体 Thin" },
+  { value: 300, label: "轻体 Light" },
+  { value: 400, label: "常规 Regular" },
+  { value: 500, label: "中等 Medium" },
+  { value: 700, label: "粗体 Bold" },
+  { value: 900, label: "特粗 Black" },
+];
+
+export const getFontFamily = () => FONT_FAMILY;
+
+const normalizeFontWeight = (value) =>
+  fontWeightOptions.some((option) => option.value === value) ? value : 400;
+
+const getTitleWeight = (settings) =>
+  settings.titleBold ? Math.max(settings.fontWeight, 700) : settings.fontWeight;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 export const defaultSettings = {
-  title: "打印过程缠料、打结\n处理方法",
-  subtitle:
-    "本期视频将为您演示，当打印过程中出现耗材缠线或打结时，如何在不结束当前打印的情况下解决故障。",
+  title: "耗材缠绕\n处理方法",
+  subtitle: "快速处理耗材缠绕与打结",
   subtitleEnabled: true,
+  fontWeight: 400,
   titleSize: 90,
   subtitleSize: 50,
   titleBold: true,
   titleX: 116,
   titleY: 426,
   textMaxWidth: 760,
-  lineThickness: 5,
+  lineThickness: 4,
   textGap: 45,
-  logoSize: 154,
+  lineControlsUnlocked: false,
+  logoSize: 100,
+  logoSizeUnlocked: false,
   logoX: 100,
   logoY: 100,
   logoPositionUnlocked: false,
@@ -124,10 +143,11 @@ const drawFallbackLogo = (ctx, settings) => {
   ctx.stroke();
 
   ctx.fillStyle = settings.foreground;
-  ctx.font = `900 ${Math.round(settings.logoSize * 0.25)}px ${FONT_FAMILY}`;
+  const fontFamily = getFontFamily();
+  ctx.font = `900 ${Math.round(settings.logoSize * 0.25)}px ${fontFamily}`;
   ctx.textBaseline = "top";
   ctx.fillText("拓竹科技", x + mark + gap, y - settings.logoSize * 0.02);
-  ctx.font = `800 ${Math.round(settings.logoSize * 0.2)}px ${FONT_FAMILY}`;
+  ctx.font = `800 ${Math.round(settings.logoSize * 0.2)}px ${fontFamily}`;
   ctx.fillText("Bambu Lab", x + mark + gap, y + settings.logoSize * 0.25);
   ctx.restore();
 };
@@ -263,7 +283,8 @@ const drawTextBlock = (ctx, settings) => {
   ctx.save();
   ctx.fillStyle = settings.foreground;
   ctx.textBaseline = "top";
-  ctx.font = `${settings.titleBold ? 900 : 500} ${settings.titleSize}px ${FONT_FAMILY}`;
+  const fontFamily = getFontFamily();
+  ctx.font = `${getTitleWeight(settings)} ${settings.titleSize}px ${fontFamily}`;
 
   const titleLines = manualLines(settings.title);
   const titleLineHeight = settings.titleSize * 1.23;
@@ -291,7 +312,7 @@ const drawTextBlock = (ctx, settings) => {
   ctx.lineTo(lineEnd, lineY);
   ctx.stroke();
 
-  ctx.font = `600 ${settings.subtitleSize}px ${FONT_FAMILY}`;
+  ctx.font = `${settings.fontWeight} ${settings.subtitleSize}px ${fontFamily}`;
   ctx.fillStyle = settings.muted;
   const subtitleLines = wrapParagraph(ctx, settings.subtitle, lineEnd - settings.titleX);
   const subtitleLineHeight = settings.subtitleSize * 1.55;
@@ -331,6 +352,10 @@ export const normalizeSettings = (settings) => ({
   ...settings,
   titleBold: settings.titleBold ?? defaultSettings.titleBold,
   subtitleEnabled: settings.subtitleEnabled ?? defaultSettings.subtitleEnabled,
+  fontWeight: normalizeFontWeight(settings.fontWeight),
+  lineControlsUnlocked:
+    settings.lineControlsUnlocked ?? defaultSettings.lineControlsUnlocked,
+  logoSizeUnlocked: settings.logoSizeUnlocked ?? defaultSettings.logoSizeUnlocked,
   logoPositionUnlocked:
     settings.logoPositionUnlocked ?? defaultSettings.logoPositionUnlocked,
   titleY: clamp(settings.titleY ?? defaultSettings.titleY, 120, 760),

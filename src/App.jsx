@@ -13,6 +13,8 @@ import {
   COVER_WIDTH,
   defaultSettings,
   fileToDataUrl,
+  fontWeightOptions,
+  getFontFamily,
   getMaskGuides,
   getPhotoFrame,
   loadImageFromSrc,
@@ -24,9 +26,7 @@ import logoEnSrc from "./assets/bambu-logo-en.png";
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-const STORAGE_KEY = "voice-cover-image/v2";
-const APP_FONT_FAMILY =
-  '"HarmonyOS Sans SC Cover", "HarmonyOS Sans SC", "HarmonyOS Sans", "Noto Sans SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif';
+const STORAGE_KEY = "voice-cover-image/v3";
 
 const measureWrappedLines = (ctx, text, maxWidth) => {
   const sourceLines = String(text || "").split("\n");
@@ -368,11 +368,15 @@ function App() {
       return;
     }
 
-    ctx.font = `${settings.titleBold ? 900 : 500} ${settings.titleSize}px ${APP_FONT_FAMILY}`;
+    const fontFamily = getFontFamily();
+    const titleWeight = settings.titleBold
+      ? Math.max(settings.fontWeight, 700)
+      : settings.fontWeight;
+    ctx.font = `${titleWeight} ${settings.titleSize}px ${fontFamily}`;
     const widestTitle = titleLines.reduce((max, line) => Math.max(max, ctx.measureText(line).width), 0);
     const lineWidth = clamp(widestTitle, 280, COVER_WIDTH - settings.titleX - 80);
 
-    ctx.font = `600 ${settings.subtitleSize}px ${APP_FONT_FAMILY}`;
+    ctx.font = `${settings.fontWeight} ${settings.subtitleSize}px ${fontFamily}`;
     const subtitleLines = measureWrappedLines(ctx, settings.subtitle, lineWidth).slice(0, 4);
     const subtitleLineHeight = settings.subtitleSize * 1.55;
     const subtitleHeight =
@@ -421,6 +425,21 @@ function App() {
       ignore = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!document.fonts?.load) return;
+    let ignore = false;
+    const fontFamily = getFontFamily();
+    Promise.all([
+      document.fonts.load(`${settings.fontWeight} 32px ${fontFamily}`),
+      document.fonts.load(`${Math.max(settings.fontWeight, 700)} 32px ${fontFamily}`),
+    ]).then(() => {
+      if (!ignore) setFontReadyTick((value) => value + 1);
+    });
+    return () => {
+      ignore = true;
+    };
+  }, [settings.fontWeight]);
 
   useEffect(() => {
     renderCover({ canvas: canvasRef.current, settings, photoImage, logoImage });
@@ -518,10 +537,19 @@ function App() {
                 </button>
               ))}
             </div>
-            <p className="font-note">
-              <span>当前字体</span>
-              <strong>HarmonyOS Sans SC</strong>
-            </p>
+            <label className="font-control">
+              <span>鸿蒙字重</span>
+              <select
+                value={settings.fontWeight}
+                onChange={(event) => setSetting({ fontWeight: Number(event.target.value) })}
+              >
+                {fontWeightOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             <label className="text-control">
               <span className="field-heading">
                 <span>主标题</span>
@@ -575,11 +603,23 @@ function App() {
               disabled={!settings.subtitleEnabled}
               onChange={(value) => setSetting({ subtitleSize: value })}
             />
+            <div className="control-group-heading">
+              <span>Logo 大小</span>
+              <label className="checkbox-toggle">
+                <input
+                  type="checkbox"
+                  checked={settings.logoSizeUnlocked}
+                  onChange={(event) => setSetting({ logoSizeUnlocked: event.target.checked })}
+                />
+                允许调整
+              </label>
+            </div>
             <SliderControl
-              label="Logo 大小"
+              label="大小"
               value={settings.logoSize}
-              min={80}
+              min={60}
               max={240}
+              disabled={!settings.logoSizeUnlocked}
               onChange={(value) => setSetting({ logoSize: value })}
             />
             <div className="control-group-heading">
@@ -636,12 +676,26 @@ function App() {
               unit="px"
               onChange={(value) => setSetting({ titleY: value })}
             />
+            <div className="control-group-heading">
+              <span>横线参数</span>
+              <label className="checkbox-toggle">
+                <input
+                  type="checkbox"
+                  checked={settings.lineControlsUnlocked}
+                  onChange={(event) =>
+                    setSetting({ lineControlsUnlocked: event.target.checked })
+                  }
+                />
+                允许调整
+              </label>
+            </div>
             <SliderControl
               label="标题/横线间距"
               value={settings.textGap}
               min={8}
               max={70}
               unit="px"
+              disabled={!settings.lineControlsUnlocked}
               onChange={(value) => setSetting({ textGap: value })}
             />
             <SliderControl
@@ -650,6 +704,7 @@ function App() {
               min={1}
               max={14}
               unit="px"
+              disabled={!settings.lineControlsUnlocked}
               onChange={(value) => setSetting({ lineThickness: value })}
             />
             <button className="ghost-button compact-button" type="button" onClick={centerTextGroup}>
