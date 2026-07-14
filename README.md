@@ -25,8 +25,10 @@
 - 内置中文 Logo 和英文 Logo，常用品牌不用反复上传。
 - Logo 大小默认 `100`，位置默认水平 `100px`、垂直 `100px`；三项共用一个“允许调整”开关。
 - 支持主标题、副标题编辑。
+- 副标题与主标题统一使用黑色，封面文字对比更清晰。
 - 只使用 HarmonyOS Sans SC，并提供轻体、常规、中等三档基础字重。
-- 主标题可切换加粗，避免每张封面都手调字重。
+- 主标题可逐级加粗，避免字重突然跳得过粗。
+- 配置可以保存为本地 JSON，照片、Logo 和全部参数都能再次导入恢复。
 - 主标题不自动乱换行，只按用户输入的换行显示。
 - 横线粗细、文字组位置、标题和横线间距可调；横线参数默认锁定，确认后再开放调整。
 - 一键把标题、横线、副标题整组垂直居中。
@@ -80,6 +82,27 @@ http://127.0.0.1:5173/
 ```text
 1920 x 1080
 ```
+
+## 保存并恢复配置
+
+完成一张封面后，点击右上角 `保存配置`。浏览器会下载一个类似下面的文件：
+
+```text
+voice-cover-config-2026-07-14-10-30.json
+```
+
+配置文件会保存：
+
+- 原照片和自定义 Logo。
+- 主标题、副标题、字重和字号。
+- Logo 大小与位置。
+- 蒙版位置和羽化宽度。
+- 照片缩放、水平/垂直位置、旋转和调色参数。
+- 横线、锁定开关及其他画布设置。
+
+以后点击 `导入配置`，选择这个 JSON 文件，即可恢复当时的照片和全部参数，直接在原结果上继续微调。内置中文/英文 Logo 使用稳定的预设编号保存，即使后续构建后的图片文件名变化也能恢复。
+
+配置文件内嵌了原照片，所以文件可能比较大，也包含你的图片内容。请像管理原照片一样管理它，不要随意上传到公开仓库。
 
 ## 生成静态 HTML
 
@@ -214,6 +237,8 @@ Voice-cover-image
 │  ├─ assets/               内置 Logo 图片
 │  ├─ coverRenderer.js      Canvas 封面渲染引擎
 │  ├─ main.jsx              React 入口
+│  ├─ projectConfig.js      配置文件生成、校验和恢复
+│  ├─ projectConfig.test.js 配置文件往返测试
 │  └─ styles.css            应用样式
 ├─ index.html               Vite HTML 入口
 ├─ package.json             命令和依赖
@@ -237,6 +262,7 @@ Voice-cover-image
 - 调用 `renderCover()` 更新预览。
 - 调用 `canvas.toBlob()` 导出 PNG。
 - 把设置自动保存到 `localStorage`。
+- 下载和导入包含照片的本地配置文件。
 
 ### `src/coverRenderer.js`
 
@@ -253,6 +279,12 @@ Voice-cover-image
 ### `src/styles.css`
 
 编辑器 UI 的视觉样式。按钮、面板、辅助线、移动端布局都在这里。
+
+### `src/projectConfig.js`
+
+本地配置文件模块。负责生成带版本号的 JSON、内嵌照片和自定义 Logo、通过预设编号保存内置 Logo，并在导入时校验文件后恢复 `settings`。
+
+对应测试位于 `src/projectConfig.test.js`，修改配置结构后应执行 `npm test`。
 
 ### `public/fonts/`
 
@@ -382,6 +414,7 @@ src/styles.css
 1. 先读 `src/coverRenderer.js`，确认最终导出的 PNG 是怎么画出来的。
 2. 再读 `src/App.jsx`，确认每个控件怎么修改 `settings`。
 3. 最后读 `src/styles.css`，确认编辑器界面和辅助线怎么显示。
+4. 如果涉及保存/导入配置，再读 `src/projectConfig.js` 和对应测试。
 
 几个不要破坏的原则：
 
@@ -390,6 +423,7 @@ src/styles.css
 - 上传图片只在浏览器本地处理，不上传服务器。
 - 主标题不要自动按宽度换行，只按用户输入的换行符换行。
 - 新增状态字段时，要同步更新 `defaultSettings` 和 `normalizeSettings()`。
+- 修改配置文件格式时，要更新版本号并补充往返测试。
 - 不要提交 `node_modules/` 和 `dist/`。
 
 ## 常用命令
@@ -410,6 +444,9 @@ npm run local
 # 预览生产构建
 npm run preview -- --port 4173
 
+# 测试配置文件保存与恢复
+npm test
+
 # 上传源码到 GitHub（先确认已经 git add 和 git commit）
 git push origin main
 
@@ -419,7 +456,7 @@ npx wrangler pages deploy dist --project-name voice-cover-image --branch main
 
 ## 隐私说明
 
-这个工具不需要后端。照片、Logo、标题和调色参数都在浏览器本地处理。除非你自己把导出的 PNG 或项目部署到外部平台，否则工具不会主动上传你的图片。
+这个工具不需要后端。照片、Logo、标题和调色参数都在浏览器本地处理。除非你自己把导出的 PNG、配置 JSON 或项目部署到外部平台，否则工具不会主动上传你的图片。配置 JSON 内嵌照片和自定义 Logo，请不要把私人配置文件提交到公开仓库。
 
 ## Star
 

@@ -2,9 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   Bold,
   Download,
+  FolderOpen,
   ImageIcon,
   Move,
   RefreshCw,
+  Save,
   Type,
   Upload,
 } from "lucide-react";
@@ -15,12 +17,14 @@ import {
   fileToDataUrl,
   fontWeightOptions,
   getFontFamily,
+  getTitleFontWeight,
   getMaskGuides,
   getPhotoFrame,
   loadImageFromSrc,
   normalizeSettings,
   renderCover,
 } from "./coverRenderer.js";
+import { createProjectConfig, parseProjectConfig } from "./projectConfig.js";
 import logoCnSrc from "./assets/bambu-logo-cn.png";
 import logoEnSrc from "./assets/bambu-logo-en.png";
 
@@ -369,9 +373,7 @@ function App() {
     }
 
     const fontFamily = getFontFamily();
-    const titleWeight = settings.titleBold
-      ? Math.max(settings.fontWeight, 700)
-      : settings.fontWeight;
+    const titleWeight = getTitleFontWeight(settings);
     ctx.font = `${titleWeight} ${settings.titleSize}px ${fontFamily}`;
     const widestTitle = titleLines.reduce((max, line) => Math.max(max, ctx.measureText(line).width), 0);
     const lineWidth = clamp(widestTitle, 280, COVER_WIDTH - settings.titleX - 80);
@@ -432,14 +434,14 @@ function App() {
     const fontFamily = getFontFamily();
     Promise.all([
       document.fonts.load(`${settings.fontWeight} 32px ${fontFamily}`),
-      document.fonts.load(`${Math.max(settings.fontWeight, 700)} 32px ${fontFamily}`),
+      document.fonts.load(`${getTitleFontWeight(settings)} 32px ${fontFamily}`),
     ]).then(() => {
       if (!ignore) setFontReadyTick((value) => value + 1);
     });
     return () => {
       ignore = true;
     };
-  }, [settings.fontWeight]);
+  }, [settings.fontWeight, settings.titleBold]);
 
   useEffect(() => {
     renderCover({ canvas: canvasRef.current, settings, photoImage, logoImage });
@@ -455,7 +457,7 @@ function App() {
       }
     }, 250);
     return () => window.clearTimeout(id);
-  }, [settings, photoSrc, logoSrc]);
+  }, [settings]);
 
   const loadPhotoFile = async (file) => {
     setStatus("正在读取照片");
@@ -475,6 +477,38 @@ function App() {
     setLogoSrc(preset.src);
     setStatus(`${preset.label} 已选中`);
   }, []);
+
+  const saveProjectConfig = () => {
+    const project = createProjectConfig({ settings, photoSrc, logoSrc, logoPresets });
+    const blob = new Blob([JSON.stringify(project, null, 2)], {
+      type: "application/json;charset=utf-8",
+    });
+    const link = document.createElement("a");
+    const timestamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
+    link.href = URL.createObjectURL(blob);
+    link.download = `voice-cover-config-${timestamp}.json`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    setStatus("配置已保存到本地");
+  };
+
+  const loadProjectConfig = async (file) => {
+    setStatus("正在读取配置");
+    try {
+      const restored = parseProjectConfig(await file.text(), {
+        logoPresets,
+        defaultLogoSrc,
+      });
+      setSettings(restored.settings);
+      setPhotoSrc(restored.photoSrc);
+      setLogoSrc(restored.logoSrc);
+      setPhotoImage(null);
+      setLogoImage(null);
+      setStatus("配置已导入，照片和参数已恢复");
+    } catch {
+      setStatus("配置文件无效或已损坏");
+    }
+  };
 
   const exportPng = () => {
     const canvas = canvasRef.current;
@@ -510,6 +544,17 @@ function App() {
           </div>
         </div>
         <div className="topbar-actions">
+          <UploadButton
+            id="project-import"
+            icon={FolderOpen}
+            label="导入配置"
+            accept=".json,application/json"
+            onFile={loadProjectConfig}
+          />
+          <button className="ghost-button" type="button" onClick={saveProjectConfig}>
+            <Save size={18} aria-hidden="true" />
+            保存配置
+          </button>
           <button className="primary-button" type="button" onClick={exportPng}>
             <Download size={18} aria-hidden="true" />
             导出 PNG

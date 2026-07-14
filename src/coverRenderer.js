@@ -15,8 +15,16 @@ export const getFontFamily = () => FONT_FAMILY;
 const normalizeFontWeight = (value) =>
   fontWeightOptions.some((option) => option.value === value) ? value : 400;
 
-const getTitleWeight = (settings) =>
-  settings.titleBold ? Math.max(settings.fontWeight, 700) : settings.fontWeight;
+const nextBoldWeight = {
+  300: 400,
+  400: 500,
+  500: 700,
+};
+
+export const getTitleFontWeight = (settings) =>
+  settings.titleBold
+    ? nextBoldWeight[settings.fontWeight] || 500
+    : settings.fontWeight;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -51,7 +59,7 @@ export const defaultSettings = {
   imageOpacity: 1,
   background: "#ffffff",
   foreground: "#050505",
-  muted: "#4f5662",
+  muted: "#050505",
   accent: "#00ae42",
 };
 
@@ -280,7 +288,7 @@ const drawTextBlock = (ctx, settings) => {
   ctx.fillStyle = settings.foreground;
   ctx.textBaseline = "top";
   const fontFamily = getFontFamily();
-  ctx.font = `${getTitleWeight(settings)} ${settings.titleSize}px ${fontFamily}`;
+  ctx.font = `${getTitleFontWeight(settings)} ${settings.titleSize}px ${fontFamily}`;
 
   const titleLines = manualLines(settings.title);
   const titleLineHeight = settings.titleSize * 1.23;
@@ -309,7 +317,7 @@ const drawTextBlock = (ctx, settings) => {
   ctx.stroke();
 
   ctx.font = `${settings.fontWeight} ${settings.subtitleSize}px ${fontFamily}`;
-  ctx.fillStyle = settings.muted;
+  ctx.fillStyle = settings.foreground;
   const subtitleLines = wrapParagraph(ctx, settings.subtitle, lineEnd - settings.titleX);
   const subtitleLineHeight = settings.subtitleSize * 1.55;
   const subtitleY = lineY + settings.textGap;
